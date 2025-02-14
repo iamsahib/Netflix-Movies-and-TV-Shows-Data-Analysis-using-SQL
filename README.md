@@ -39,20 +39,17 @@ CREATE TABLE netflix
 );
 ```
 
-## Business Problems and Solutions
+#Business Problems and Solutions
 
-### 1. Count the Number of Movies vs TV Shows
+#Q1 1. Count the Number of Movies vs TV Shows
 
-```sql
-select type,
-count(*) as number_of_count
-from netflix group by type;```
+select type,count(*) as number_of_count from netflix group by type;
 
-**Objective** Determine the distribution of content types on Netflix.
+#Objective: Determine the distribution of content types on Netflix.
 
-### 2. Find the Most Common Rating for Movies and TV Shows
+#Q2 2. Find the Most Common Rating for Movies and TV Shows
+select * from netflix;
 
-```sql
 WITH RatingCounts AS (
     SELECT 
         type,
@@ -66,125 +63,102 @@ RankedRatings AS (
         type,
         rating,
         rating_count,
-        RANK() OVER (PARTITION BY type ORDER BY rating_count DESC) AS rank
+        RANK() OVER (PARTITION BY type ORDER BY rating_count DESC) AS rnk
     FROM RatingCounts
 )
 SELECT 
     type,
     rating AS most_frequent_rating
 FROM RankedRatings
-WHERE rank = 1;
-```
+WHERE rnk = 1;
 
-**Objective:** Identify the most frequently occurring rating for each type of content.
+#Objective: Identify the most frequently occurring rating for each type of content.
 
-### 3. List All Movies Released in a Specific Year (e.g., 2020)
+#Q3 List All Movies Released in a Specific Year (e.g., 2020)
 
-```sql
 select title from netflix where release_year = 2020;
-```
 
-**Objective:** Retrieve all movies released in a specific year.
+#Objective: Retrieve all movies released in a specific year.
 
-### 4. Find the Top 5 Countries with the Most Content on Netflix
+#Q4 4. Find the Top 5 Countries with the Most Content on Netflix
 
-```sql
-select type,country,count(*) as content from netflix group by type,country order by content desc;```
+select * from netflix;
 
-**Objective:** Identify the top 5 countries with the highest number of content items.
+select type,country,count(*) as content from netflix group by type,country order by content desc;
 
-### 5. Identify the Longest Movie
+#Objective: Identify the top 5 countries with the highest number of content items.
 
-```sql
+#Q5 Identify the Longest Movie
+select * from netflix;
+
 SELECT MAX(duration) AS longest_duration
-FROM netflix where type = 'movie';```
+FROM netflix where type = 'movie';
 
-**Objective:** Find the movie with the longest duration.
+#Objective: Find the movie with the longest duration.
 
-### 6. Find Content Added in the Last 5 Years
+#6. Find Content Added in the Last 5 Years
+select * from netflix;
 
-```sql
-select * from netflix where date_add(curdate(),interval 5 year);```
+select * from netflix where date_add(curdate(),interval 5 year);
 
-**Objective:** Retrieve content added to Netflix in the last 5 years.
+#Objective: Retrieve content added to Netflix in the last 5 years.
 
-### 7. Find All Movies/TV Shows by Director 'Rajiv Chilaka'
+#Q7 7. Find All Movies/TV Shows by Director 'Rajiv Chilaka'
 
-```select type,director from netflix where director = 'Rajiv Chilaka';
-```
+select type,director from netflix where director = 'Rajiv Chilaka';
 
-**Objective:** List all content directed by 'Rajiv Chilaka'.
+#Objective: List all content directed by 'Rajiv Chilaka'.
 
-### 8. List All TV Shows with More Than 5 Seasons
+#Q8. List All TV Shows with More Than 5 Seasons
 
-```sql
-select type,duration from netflix where type = 'TV show' and duration > '5 season';```
+select * from netflix;
 
-**Objective:** Identify TV shows with more than 5 seasons.
+select type,duration from netflix where type = 'TV show' and duration > '5 season';
+#Objective: Identify TV shows with more than 5 seasons.
 
-### 9. Count the Number of Content Items in Each Genre
+#Q9. Count the Number of Content Items in Each Genre
 
-```sql
-select listed_in,count(*) as Number_of_content from netflix group by listed_in;```
+select * from netflix;
+select listed_in,count(*) as Number_of_content from netflix group by listed_in;
 
-**Objective:** Count the number of content items in each genre.
+#Objective: Count the number of content items in each genre.
 
-### 10.Find each year and the average numbers of content release in India on netflix. 
-return top 5 year with highest avg content release!
-
-```sql
+#Q10.Find each year and the average numbers of content release in India on netflix.
+select * from netflix;
 select release_year,country,count(show_id) as total_no_content
 from netflix
 where country = 'india' 
 group by release_year
 order by total_no_content desc;
-```
 
-**Objective:** Calculate and rank years by the average number of content releases by India.
+#Objective: Calculate and rank years by the average number of content releases by India.
 
-### 11. List All Movies that are Documentaries
+#Q11. List All Movies that are Documentaries
 
-```sql
-select * from netflix where listed_in = 'Documentaries';```
+select * from netflix where listed_in = 'Documentaries';
+#Objective: Retrieve all movies classified as documentaries.
 
-**Objective:** Retrieve all movies classified as documentaries.
+#Q12. Find All Content Without a Director
 
-### 12. Find All Content Without a Director
+select * from netflix where director is null;
 
-```sql
-select * from netflix where director is null;```
+#Objective: List content that does not have a director.
 
-**Objective:** List content that does not have a director.
+#Q13. Find How Many Movies Actor 'Salman Khan' Appeared in the Last 10 Years
 
-### 13. Find How Many Movies Actor 'Salman Khan' Appeared in the Last 10 Years
-
-```select * from netflix;
+select * from netflix;
 select type,casts,release_year 
 from netflix 
 where casts like '%salman khan%' and date_add(curdate(), interval 10 year);
 
-```
+#Objective: Count the number of movies featuring 'Salman Khan' in the last 10 years.
 
-**Objective:** Count the number of movies featuring 'Salman Khan' in the last 10 years.
+#Q14. Find the Top 10 Actors Who Have Appeared in the Highest Number of Movies Produced in India
+select * from netflix;
 
-### 14. Find the Top 10 Actors Who Have Appeared in the Highest Number of Movies Produced in India
 
-```sql
-SELECT 
-    UNNEST(STRING_TO_ARRAY(casts, ',')) AS actor,
-    COUNT(*)
-FROM netflix
-WHERE country = 'India'
-GROUP BY actor
-ORDER BY COUNT(*) DESC
-LIMIT 10;
-```
-
-**Objective:** Identify the top 10 actors with the most appearances in Indian-produced movies.
-
-### 15. Categorize Content Based on the Presence of 'Kill' and 'Violence' Keywords
-
-```sql
+#15. Categorize Content Based on the Presence of 'Kill' and 'Violence' Keywords
+select * from netflix;
 SELECT 
     category,
     COUNT(*) AS content_count
@@ -197,7 +171,6 @@ FROM (
     FROM netflix
 ) AS categorized_content
 GROUP BY category;
-```
 
 **Objective:** Categorize content as 'Bad' if it contains 'kill' or 'violence' and 'Good' otherwise. Count the number of items in each category.
 
